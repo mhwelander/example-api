@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: Backup Service API
+  description: API documentation for the Backup Service, which allows games to backup their progress.
+  version: 1.0.0
+paths:
+  /backup:
+    post:
+      summary: Back up game progress
+      description: Use the Backup Service API to send a user's game progress data from their game client to the [Backup Service](https://github.com/tobytangalin/toby-tactile-takehome-test/blob/afb18bfd4a5c00c51030112fe8b360bcbe7bf585/backup%20service.md). The request payload must be less than 1 MB.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                game:
+                  type: string
+                  description: The name of the game sending the backup.
+                  enum:
+                    - flower-garden
+                    - simons-cat
+                    - mansion-story
+                  example: flower-garden
+                deviceId:
+                  type: string
+                  format: uuid
+                  description: A unique identifier for the device.
+                  example: 123e4567-e89b-12d3-a456-426614174000
+                data:
+                  type: object
+                  required:
+                    - stars
+                    - chapter
+                    - level
+                  properties:
+                    stars:
+                      type: integer
+                      description: Number of stars earned.
+                      example: 3
+                    chapter:
+                      type: integer
+                      description: Current chapter the player is in.
+                      example: 2
+                    level:
+                      type: integer
+                      description: Current level the player is on within the chapter.
+                      example: 12
+      responses:
+        '200':
+          description: Backup successfully processed.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Game data backed up successfully."
+        '400':
+          description: Bad Request - missing or invalid parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Missing request parameter - game, deviceId, and data are required."
+        '422':
+          description: Unprocessable Entity - invalid game name or unsupported game.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Game not recognized - must be one of: flower-garden, simons-cat, mansion-story."
+        '500':
+          description: Internal Server Error - unexpected server issue.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "An unexpected error occurred."
