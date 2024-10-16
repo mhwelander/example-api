@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Backup Service API
-  description: API documentation for the Backup Service, which allows games to backup their progress. Test test.
+  description: API documentation for the Backup Service, which allows games to backup their progress. Test test 2.
   version: 1.0.0
 paths:
   /backup:
